@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_maps"
+        android:enabled="true"
+        android:icon="@drawable/outline_map_24"
+        android:title="Maps" />
+    <item
+        android:id="@+id/nav_park"
+        android:enabled="true"
+        android:icon="@drawable/round_local_parking_24"
+        android:title="Parking" />
+</menu>
