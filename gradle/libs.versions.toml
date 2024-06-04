@@ -17,6 +17,8 @@ places = "3.5.0"
 glide = "5.0.0-rc01"
 fragmentKtx = "1.8.0-rc01"
 lifecycleViewmodelKtx = "2.8.1"
+viewpager2 = "1.1.0"
+leakcanaryAndroid = "3.0-alpha-7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -34,6 +36,8 @@ places = { group = "com.google.android.libraries.places", name = "places", versi
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
+androidx-viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager2" }
+leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanaryAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

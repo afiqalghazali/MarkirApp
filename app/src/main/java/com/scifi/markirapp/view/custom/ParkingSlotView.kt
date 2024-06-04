@@ -8,7 +8,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.scifi.markirapp.R
-import com.scifi.markirapp.view.ParkingSlotActivity
+import com.scifi.markirapp.data.ParkingSlot
 
 class ParkingSlotView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
@@ -20,7 +20,7 @@ class ParkingSlotView(context: Context, attrs: AttributeSet) : View(context, att
 
     private val carDrawable: Drawable? = ContextCompat.getDrawable(context, R.drawable.car)
 
-    var parkingSlots: List<ParkingSlotActivity.ParkingSlot> = listOf()
+    var parkingSlots: List<ParkingSlot> = listOf()
         set(value) {
             field = value
             requestLayout()
@@ -29,17 +29,16 @@ class ParkingSlotView(context: Context, attrs: AttributeSet) : View(context, att
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val desiredWidth = MeasureSpec.getSize(widthMeasureSpec)
-        val slotHeight = 200
         val rows = (parkingSlots.size + 7) / 8
-        val desiredHeight = (rows * slotHeight * 1.25f).toInt()
+        val slotHeight = desiredWidth / 8 * 1.25f
+        val desiredHeight = (rows * slotHeight * 1.5f).toInt()
         setMeasuredDimension(desiredWidth, desiredHeight)
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val slotWidth = width / 8f
-        val rows = (parkingSlots.size + 7) / 8
-        val slotHeight = height / (rows * 1.5f)
+        val slotHeight = slotWidth * 1.25f
 
         parkingSlots.forEachIndexed { index, slot ->
             val row = index / 8

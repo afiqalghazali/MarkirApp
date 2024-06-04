@@ -1,5 +1,6 @@
 package com.scifi.markirapp.view.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -7,6 +8,7 @@ import com.bumptech.glide.Glide
 import com.scifi.markirapp.R
 import com.scifi.markirapp.data.ParkingLocation
 import com.scifi.markirapp.databinding.ItemParkBinding
+import com.scifi.markirapp.view.ParkingSlotActivity
 
 class ParkingAdapter(private var parkingList: List<ParkingLocation>) : RecyclerView.Adapter<ParkingAdapter.ParkingViewHolder>() {
 
@@ -33,15 +35,18 @@ class ParkingAdapter(private var parkingList: List<ParkingLocation>) : RecyclerV
                 tvLocationName.text = parkingLocation.name
                 tvLocationSlots.text = "${parkingLocation.slotsAvailable} slots available"
                 tvLocationRange.text = parkingLocation.distance
-
-                if (parkingLocation.imageUrl.isEmpty()) {
-                    ivImage.setImageResource(R.drawable.baseline_broken_image_24)
-                } else {
-                    Glide.with(itemView.context)
-                        .load(parkingLocation.imageUrl)
-                        .into(ivImage)
-                }
-
+            }
+            val context = binding.root.context
+            if (parkingLocation.imageUrl.isEmpty()) {
+                binding.ivImage.setImageResource(R.drawable.baseline_broken_image_24)
+            } else {
+                Glide.with(context)
+                    .load(parkingLocation.imageUrl)
+                    .into(binding.ivImage)
+            }
+            itemView.setOnClickListener {
+                val intent = Intent(context, ParkingSlotActivity::class.java)
+                context.startActivity(intent)
             }
 
         }

@@ -45,6 +45,7 @@ import com.scifi.markirapp.BuildConfig
 import com.scifi.markirapp.R
 import com.scifi.markirapp.data.ParkingLocation
 import com.scifi.markirapp.databinding.FragmentMapsBinding
+import java.lang.ref.WeakReference
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
 
@@ -55,7 +56,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     private lateinit var placesClient: PlacesClient
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
-
     private lateinit var parkingViewModel: ParkingViewModel
 
     override fun onCreateView(
@@ -82,13 +82,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             .setMinUpdateIntervalMillis(5000)
             .build()
 
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                for (location in locationResult.locations) {
-                    updateLocation(location)
-                }
-            }
-        }
+        locationCallback = MapsFragmentLocationCallback(this)
 
         binding.fabLocation.setOnClickListener {
             getMyLocation()
@@ -194,7 +188,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         placesClient.findCurrentPlace(request)
             .addOnSuccessListener { response: FindCurrentPlaceResponse ->
-                if (!isAdded || context == null) return@addOnSuccessListener  // Check again before updating UI
+                if (!isAdded || context == null) return@addOnSuccessListener
                 val parkingLocations = mutableListOf<ParkingLocation>()
                 for (placeLikelihood in response.placeLikelihoods) {
                     val place = placeLikelihood.place
@@ -249,5 +243,18 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         super.onDestroyView()
         fusedLocationClient.removeLocationUpdates(locationCallback)
         _binding = null
+    }
+
+    private class MapsFragmentLocationCallback(fragment: MapsFragment) : LocationCallback() {
+        private val fragmentRef = WeakReference(fragment)
+
+        override fun onLocationResult(locationResult: LocationResult) {
+            val fragment = fragmentRef.get()
+            if (fragment != null && fragment.isAdded) {
+                for (location in locationResult.locations) {
+                    fragment.updateLocation(location)
+                }
+            }
+        }
     }
 }

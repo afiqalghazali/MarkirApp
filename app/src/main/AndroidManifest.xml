@@ -19,26 +19,10 @@
         <activity
             android:name=".view.ParkingSlotActivity"
             android:exported="false" />
-        <activity
-            android:name=".DetailsActivity"
-            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyASBn8-KqQuQzCmOWsnIAzXey-rT2dzQIo" />
-
-        <activity
-            android:name=".ProfileActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ParkingActivity"
-            android:exported="false" />
-        <activity
-            android:name=".RegisterActivity"
-            android:exported="false" />
-        <activity
-            android:name=".LoginActivity"
-            android:exported="false" />
         <activity
             android:name=".view.WelcomeActivity"
             android:exported="false" />
