@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "442556515105",
+    "project_id": "markirapp",
+    "storage_bucket": "markirapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:442556515105:android:ecc944ac7d6d54617bb460",
+        "android_client_info": {
+          "package_name": "com.scifi.markirapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "442556515105-i7eg16f8q1q3d3n5utq3rpu35rbui8i6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.scifi.markirapp",
+            "certificate_hash": "6244b1633ddfca631e91a1168e0ff8dd429a0b96"
+          }
+        },
+        {
+          "client_id": "442556515105-71tdkkebvuj18g3nlqfca62sqhd46cu1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC924DGszc4GqHUiCp_XH51U1lcF5uT5v0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "442556515105-71tdkkebvuj18g3nlqfca62sqhd46cu1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

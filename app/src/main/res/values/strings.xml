@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">MarkirApp</string>
+    <string name="your_web_client_id">442556515105-71tdkkebvuj18g3nlqfca62sqhd46cu1.apps.googleusercontent.com</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="Profile">Profile</string>
+    <string name="logout">LogOut</string>
+    <string name="parking">Parking</string>
+    <string name="maps">Maps</string>
 </resources>

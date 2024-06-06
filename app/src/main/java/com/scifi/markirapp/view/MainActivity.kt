@@ -1,16 +1,27 @@
 package com.scifi.markirapp.view
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
+import android.view.View
+import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.credentials.ClearCredentialStateRequest
+import androidx.credentials.CredentialManager
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.scifi.markirapp.R
 import com.scifi.markirapp.databinding.ActivityMainBinding
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-
+    private lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -20,6 +31,15 @@ class MainActivity : AppCompatActivity() {
         setupBottomNavigation()
         if (savedInstanceState == null) {
             binding.bottomNavigation.selectedItemId = R.id.nav_maps
+
+            auth = Firebase.auth
+            val firebaseUser = auth.currentUser
+            if (firebaseUser == null) {
+                startActivity(Intent(this,WelcomeActivity::class.java))
+                finish()
+                return
+            }
+
         }
     }
 
@@ -36,6 +56,10 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
 
+                R.id.nav_Account -> {
+                    replaceFragment(ProfileFragment())
+                    true
+                }
                 else -> false
             }
         }
@@ -46,4 +70,5 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.fragment_container, fragment)
             .commit()
     }
+
 }
