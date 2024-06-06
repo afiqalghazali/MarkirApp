@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.scifi.markirapp.databinding.FragmentParkingBinding
 import com.scifi.markirapp.view.adapter.ParkingAdapter
@@ -15,7 +15,7 @@ class ParkingFragment : Fragment() {
 
     private var _binding: FragmentParkingBinding? = null
     private val binding get() = _binding!!
-    private lateinit var parkingViewModel: ParkingViewModel
+    private val parkingViewModel by activityViewModels<ParkingViewModel>()
     private lateinit var parkingAdapter: ParkingAdapter
 
     override fun onCreateView(
@@ -23,13 +23,13 @@ class ParkingFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentParkingBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        parkingViewModel = ViewModelProvider(requireActivity())[ParkingViewModel::class.java]
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         observeData()
-
-        return binding.root
     }
 
     private fun setupRecyclerView() {
@@ -41,6 +41,8 @@ class ParkingFragment : Fragment() {
     private fun observeData() {
         parkingViewModel.parkingLocations.observe(viewLifecycleOwner) { locations ->
             parkingAdapter.updateData(locations)
+            binding.viewEmpty.visibility = if (locations.isEmpty()) View.VISIBLE else View.GONE
+            binding.rvPark.visibility = if (locations.isEmpty()) View.GONE else View.VISIBLE
         }
     }
 
@@ -49,3 +51,4 @@ class ParkingFragment : Fragment() {
         _binding = null
     }
 }
+

@@ -5,12 +5,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.snackbar.Snackbar
 import com.scifi.markirapp.R
 import com.scifi.markirapp.data.ParkingLocation
 import com.scifi.markirapp.databinding.ItemParkBinding
 import com.scifi.markirapp.view.ParkingSlotActivity
+import com.scifi.markirapp.view.utils.InterfaceUtils
 
-class ParkingAdapter(private var parkingList: List<ParkingLocation>) : RecyclerView.Adapter<ParkingAdapter.ParkingViewHolder>() {
+class ParkingAdapter(private var parkingList: List<ParkingLocation>) :
+    RecyclerView.Adapter<ParkingAdapter.ParkingViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ParkingViewHolder {
         val binding = ItemParkBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -29,7 +32,8 @@ class ParkingAdapter(private var parkingList: List<ParkingLocation>) : RecyclerV
         notifyDataSetChanged()
     }
 
-    class ParkingViewHolder(private val binding: ItemParkBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ParkingViewHolder(private val binding: ItemParkBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(parkingLocation: ParkingLocation) {
             binding.apply {
                 tvLocationName.text = parkingLocation.name
@@ -47,6 +51,18 @@ class ParkingAdapter(private var parkingList: List<ParkingLocation>) : RecyclerV
             itemView.setOnClickListener {
                 val intent = Intent(context, ParkingSlotActivity::class.java)
                 context.startActivity(intent)
+            }
+            itemView.setOnLongClickListener {
+                InterfaceUtils.showAlert(
+                    context,
+                    "Save this location?",
+                    primaryButtonText = "Yes",
+                    onPrimaryButtonClick = {
+                        Snackbar.make(it, "Location saved", Snackbar.LENGTH_SHORT).show()
+                    },
+                    secondaryButtonText = "No"
+                )
+                true
             }
 
         }
