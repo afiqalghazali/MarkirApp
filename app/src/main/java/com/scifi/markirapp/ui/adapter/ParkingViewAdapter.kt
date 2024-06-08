@@ -1,12 +1,13 @@
-package com.scifi.markirapp.view.adapter
+package com.scifi.markirapp.ui.adapter
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.scifi.markirapp.view.ParkingViewFragment
+import com.scifi.markirapp.ui.view.ParkingViewFragment
 
-class ParkingViewAdapter(activity: AppCompatActivity, private val floors: List<Int>): FragmentStateAdapter(activity) {
+class ParkingViewAdapter(activity: AppCompatActivity, private val floors: List<Int>) :
+    FragmentStateAdapter(activity) {
     override fun getItemCount(): Int = floors.size
 
     override fun createFragment(position: Int): Fragment {

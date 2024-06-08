@@ -18,6 +18,12 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "API_KEY", "\"AIzaSyASBn8-KqQuQzCmOWsnIAzXey-rT2dzQIo\"")
+        buildConfigField(
+            "String",
+            "DIRECTIONS_API_KEY",
+            "\"AIzaSyD4MtMBInFRcuhMs0FI4BkEttFXsGJN7ys\""
+        )
+        buildConfigField("String", "PLACES_API_KEY", "\"AIzaSyBxmj04Zn0YHrEt6uHkojiinLxFGsoQsPI\"")
     }
 
     buildTypes {
@@ -60,13 +66,12 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
-    implementation(libs.android.maps.utils)
     implementation(libs.firebase.auth)
-    debugImplementation(libs.leakcanary.android)
+    implementation(libs.android.maps.utils)
+//    debugImplementation(libs.leakcanary.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
     implementation(libs.play.services.auth)
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)

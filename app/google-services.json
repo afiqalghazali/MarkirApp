@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "442556515105-j9n4musertvfln5r373ngdoogbj1om3q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.scifi.markirapp",
+            "certificate_hash": "d1bafcd8c5ecf78f9fffc752458c9e2088950d7f"
+          }
+        },
+        {
           "client_id": "442556515105-71tdkkebvuj18g3nlqfca62sqhd46cu1.apps.googleusercontent.com",
           "client_type": 3
         }

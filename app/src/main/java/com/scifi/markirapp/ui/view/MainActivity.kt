@@ -1,22 +1,15 @@
-package com.scifi.markirapp.view
+package com.scifi.markirapp.ui.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
-import android.view.View
-import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.credentials.ClearCredentialStateRequest
-import androidx.credentials.CredentialManager
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.scifi.markirapp.R
 import com.scifi.markirapp.databinding.ActivityMainBinding
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,7 +28,7 @@ class MainActivity : AppCompatActivity() {
             auth = Firebase.auth
             val firebaseUser = auth.currentUser
             if (firebaseUser == null) {
-                startActivity(Intent(this,WelcomeActivity::class.java))
+                startActivity(Intent(this, WelcomeActivity::class.java))
                 finish()
                 return
             }
@@ -60,6 +53,7 @@ class MainActivity : AppCompatActivity() {
                     replaceFragment(ProfileFragment())
                     true
                 }
+
                 else -> false
             }
         }
@@ -69,6 +63,11 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, fragment)
             .commit()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        auth.signOut()
     }
 
 }

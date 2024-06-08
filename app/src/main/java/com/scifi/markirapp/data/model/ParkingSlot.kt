@@ -1,4 +1,4 @@
-package com.scifi.markirapp.data
+package com.scifi.markirapp.data.model
 
 data class ParkingSlot(
     val id: String,

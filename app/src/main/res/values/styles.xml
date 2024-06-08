@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="CustomButton" parent="Widget.Material3.Button">
         <item name="android:background">@drawable/custom_button</item>
     </style>
 
-    <style name="CustomBottomNavigationActive" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
-        <item name="android:color">?colorTertiary</item>
+    <style name="CustomOutlineButton" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/warning</item>
+        <item name="android:textColor">@color/warning</item>
+        <item name="android:padding">8dp</item>
+        <item name="rippleColor">?colorError</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.CustomOutlineButton</item>
     </style>
 
-    <style name="CustomAutocompleteStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="android:textColor">?colorAccent</item>
+    <style name="ShapeAppearance.CustomOutlineButton" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">14dp</item>
+    </style>
+
+
+    <style name="CustomBottomNavigationActive" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">?colorTertiary</item>
     </style>
 </resources>

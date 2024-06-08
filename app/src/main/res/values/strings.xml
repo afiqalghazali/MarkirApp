@@ -1,10 +1,35 @@
 <resources>
-    <string name="app_name">MarkirApp</string>
+    <string name="app_name">Markir</string>
     <string name="your_web_client_id">442556515105-71tdkkebvuj18g3nlqfca62sqhd46cu1.apps.googleusercontent.com</string>
-
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="Profile">Profile</string>
-    <string name="logout">LogOut</string>
+    <string name="profile">Profile</string>
+    <string name="btn_logout">Logout</string>
     <string name="parking">Parking</string>
     <string name="maps">Maps</string>
+    <string name="fab_location_desc">Enable my location</string>
+    <string name="fab_dark_desc">Enable dark mode</string>
+    <string name="fab_traffic_desc">Enable traffic</string>
+    <string name="parking_slots">Parking Slots</string>
+    <string name="btn_save_location">Save location</string>
+    <string name="markir_logo_desc">Markir Logo</string>
+    <string name="welcome_text_tittle">Welcome to Markir</string>
+    <string name="welcome_text_description">Find open spots instantly and manage parking efficiently.</string>
+    <string name="btn_login">Continue with Google</string>
+    <string name="message">Message</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="btn_set_route">Set a route</string>
+    <string name="parking_fragment_title">Nearest Parking Area</string>
+    <string name="empty_view_text">No parking found</string>
+    <string name="user_name">User Name</string>
+    <string name="user_email">User Email</string>
+    <string name="save_location_desc">Save location logo</string>
+    <string name="saved_location_text">Saved location</string>
+    <string name="iv_image_desc">Image place</string>
+    <string name="parking_location_title">Parking Location</string>
+    <string name="parking_location_description">10 slots available</string>
+    <string name="parking_location_range">100m</string>
+    <string name="count_floor">Floor %1$d</string>
+    <string name="count_slots">Available Slots: %1$d</string>
+    <string name="count_slots_available">%d slots available</string>
+    <string name="count_range">%dm</string>
 </resources>

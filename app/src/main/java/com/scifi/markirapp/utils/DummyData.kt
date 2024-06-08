@@ -1,4 +1,6 @@
-package com.scifi.markirapp.data
+package com.scifi.markirapp.utils
+
+import com.scifi.markirapp.data.model.ParkingSlot
 
 object DummyData {
     val allSlots = listOf(

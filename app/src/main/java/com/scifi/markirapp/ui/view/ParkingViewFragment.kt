@@ -1,14 +1,15 @@
-package com.scifi.markirapp.view
+package com.scifi.markirapp.ui.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.scifi.markirapp.data.DummyData
-import com.scifi.markirapp.data.ParkingSlot
+import com.scifi.markirapp.R
+import com.scifi.markirapp.data.model.ParkingSlot
 import com.scifi.markirapp.databinding.FragmentParkingViewBinding
-import com.scifi.markirapp.view.custom.ParkingSlotView
+import com.scifi.markirapp.ui.custom.ParkingSlotView
+import com.scifi.markirapp.utils.DummyData
 
 
 class ParkingViewFragment : Fragment() {
@@ -29,8 +30,8 @@ class ParkingViewFragment : Fragment() {
         val floor = arguments?.getInt(ARG_FLOOR) ?: return
         val slots = getParkingSlotsForFloor(floor)
         parkingSlotView.parkingSlots = slots
-        binding.tvFloor.text = "Floor $floor"
-        binding.tvSlots.text = "Available Slots: ${slots.count { !it.isOccupied }}"
+        binding.tvFloor.text = getString(R.string.count_floor, floor)
+        binding.tvSlots.text = getString(R.string.count_slots, slots.count { !it.isOccupied })
     }
 
     private fun getParkingSlotsForFloor(floor: Int): List<ParkingSlot> {

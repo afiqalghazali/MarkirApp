@@ -26,14 +26,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="24dp"
                 android:paddingHorizontal="16dp"
-                android:text="Message"
+                android:text="@string/message"
                 android:textAlignment="center"
                 android:textSize="18sp" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="8dp"
                 android:background="?android:attr/listDivider" />
 
             <Button
@@ -41,13 +40,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:text="OK"
+                android:paddingVertical="16dp"
+                android:text="@string/ok"
                 android:textColor="?colorPrimary" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="8dp"
                 android:background="?android:attr/listDivider" />
 
             <Button
@@ -55,7 +54,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:text="Cancel"
+                android:paddingVertical="16dp"
+                android:text="@string/cancel"
                 android:textColor="?colorSurfaceInverse" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>

@@ -1,9 +1,9 @@
-package com.scifi.markirapp.view
+package com.scifi.markirapp.ui.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.scifi.markirapp.data.ParkingLocation
+import com.scifi.markirapp.data.model.ParkingLocation
 
 class ParkingViewModel : ViewModel() {
 

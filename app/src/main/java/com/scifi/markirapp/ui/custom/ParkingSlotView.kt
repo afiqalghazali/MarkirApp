@@ -1,4 +1,4 @@
-package com.scifi.markirapp.view.custom
+package com.scifi.markirapp.ui.custom
 
 import android.content.Context
 import android.graphics.Canvas
@@ -8,7 +8,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.scifi.markirapp.R
-import com.scifi.markirapp.data.ParkingSlot
+import com.scifi.markirapp.data.model.ParkingSlot
 
 class ParkingSlotView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
@@ -87,14 +87,30 @@ class ParkingSlotView(context: Context, attrs: AttributeSet) : View(context, att
                     style = Paint.Style.FILL
                     color = fillColor
                 }
-                canvas.drawRoundRect(drawableLeft.toFloat(), drawableTop.toFloat(), drawableRight.toFloat(), drawableBottom.toFloat(), cornerRadius, cornerRadius, paint)
+                canvas.drawRoundRect(
+                    drawableLeft.toFloat(),
+                    drawableTop.toFloat(),
+                    drawableRight.toFloat(),
+                    drawableBottom.toFloat(),
+                    cornerRadius,
+                    cornerRadius,
+                    paint
+                )
 
                 paint.apply {
                     style = Paint.Style.STROKE
                     color = strokeColor
                     strokeWidth = strokeWidthValue
                 }
-                canvas.drawRoundRect(drawableLeft.toFloat(), drawableTop.toFloat(), drawableRight.toFloat(), drawableBottom.toFloat(), cornerRadius, cornerRadius, paint)
+                canvas.drawRoundRect(
+                    drawableLeft.toFloat(),
+                    drawableTop.toFloat(),
+                    drawableRight.toFloat(),
+                    drawableBottom.toFloat(),
+                    cornerRadius,
+                    cornerRadius,
+                    paint
+                )
 
                 paint.apply {
                     style = Paint.Style.FILL
@@ -103,8 +119,17 @@ class ParkingSlotView(context: Context, attrs: AttributeSet) : View(context, att
                     textSize = textSizeValue
                 }
                 canvas.save()
-                canvas.rotate(-90f, (drawableLeft + drawableRight) / 2f, (drawableTop + drawableBottom) / 2f)
-                canvas.drawText(slot.id, (drawableLeft + drawableRight) / 2f, (drawableTop + drawableBottom) / 2f - (paint.descent() + paint.ascent()) / 2, paint)
+                canvas.rotate(
+                    -90f,
+                    (drawableLeft + drawableRight) / 2f,
+                    (drawableTop + drawableBottom) / 2f
+                )
+                canvas.drawText(
+                    slot.id,
+                    (drawableLeft + drawableRight) / 2f,
+                    (drawableTop + drawableBottom) / 2f - (paint.descent() + paint.ascent()) / 2,
+                    paint
+                )
                 canvas.restore()
             }
         }

@@ -1,4 +1,4 @@
-package com.scifi.markirapp.view
+package com.scifi.markirapp.ui.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.scifi.markirapp.databinding.FragmentParkingBinding
-import com.scifi.markirapp.view.adapter.ParkingAdapter
+import com.scifi.markirapp.ui.adapter.ParkingAdapter
+import com.scifi.markirapp.ui.viewmodel.ParkingViewModel
 
 
 class ParkingFragment : Fragment() {
@@ -41,6 +42,7 @@ class ParkingFragment : Fragment() {
     private fun observeData() {
         parkingViewModel.parkingLocations.observe(viewLifecycleOwner) { locations ->
             parkingAdapter.updateData(locations)
+            parkingAdapter.sortByDistance()
             binding.viewEmpty.visibility = if (locations.isEmpty()) View.VISIBLE else View.GONE
             binding.rvPark.visibility = if (locations.isEmpty()) View.GONE else View.VISIBLE
         }

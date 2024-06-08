@@ -1,4 +1,4 @@
-package com.scifi.markirapp.view.utils
+package com.scifi.markirapp.utils
 
 import android.content.Context
 import android.view.LayoutInflater
