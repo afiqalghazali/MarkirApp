@@ -36,12 +36,16 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         auth = Firebase.auth
         setupAction()
+
     }
 
     private fun setupAction() {
         binding.apply {
             btnLogout.setOnClickListener {
                 signOut()
+            }
+            binding.btnFav.setOnClickListener {
+                goToFavoriteActivity()
             }
             tvName.text = auth.currentUser?.displayName
             tvEmail.text = auth.currentUser?.email
@@ -50,7 +54,10 @@ class ProfileFragment : Fragment() {
                 .into(ivAvatar)
         }
     }
-
+    private fun goToFavoriteActivity() {
+        val intent = Intent(requireActivity(), FavoriteActivity::class.java)
+        startActivity(intent)
+    }
     private fun signOut() {
         InterfaceUtils.showAlert(
             requireActivity(),
@@ -68,5 +75,8 @@ class ProfileFragment : Fragment() {
             },
             secondaryButtonText = "No"
         )
+    }
+    companion object{
+        const val  LOCATON_EXTRA = "location_extra"
     }
 }

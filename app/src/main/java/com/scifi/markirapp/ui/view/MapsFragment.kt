@@ -397,6 +397,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             slotsAvailable = 10,
             distance = distance,
             imageUrl = imageUrl,
+            isBookmarked = false
         )
     }
 

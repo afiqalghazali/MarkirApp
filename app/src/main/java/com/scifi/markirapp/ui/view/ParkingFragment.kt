@@ -37,6 +37,7 @@ class ParkingFragment : Fragment() {
         parkingAdapter = ParkingAdapter(listOf())
         binding.rvPark.layoutManager = LinearLayoutManager(context)
         binding.rvPark.adapter = parkingAdapter
+
     }
 
     private fun observeData() {
@@ -53,4 +54,3 @@ class ParkingFragment : Fragment() {
         _binding = null
     }
 }
-

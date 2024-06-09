@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "442556515105",
+    "firebase_url": "https://markirapp-default-rtdb.firebaseio.com",
     "project_id": "markirapp",
     "storage_bucket": "markirapp.appspot.com"
   },

@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
     alias(libs.plugins.google.gms.google.services)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -68,6 +69,7 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.firebase.auth)
     implementation(libs.android.maps.utils)
+    implementation(libs.firebase.database)
 //    debugImplementation(libs.leakcanary.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
