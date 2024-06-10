@@ -14,11 +14,11 @@ interface MapsApiService {
         @Query("key") apiKey: String,
     ): Response<DirectionsResponse>
 
-    @GET("place/nearbysearch/json")
+    @GET("place/textsearch/json")
     suspend fun getPlaces(
+        @Query("query") query: String,
         @Query("location") location: String,
         @Query("radius") radius: Int,
-        @Query("type") type: String,
         @Query("key") apiKey: String,
     ): Response<PlacesResponse>
 }

@@ -31,8 +31,8 @@
 
             <ImageView
                 android:id="@+id/ivImage"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_gravity="center_vertical"
                 android:contentDescription="@string/iv_image_desc"
                 android:scaleType="centerCrop"
@@ -63,45 +63,16 @@
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
-            <LinearLayout
-                android:id="@+id/content"
+            <TextView
+                android:id="@+id/tvLocationSlots"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="2dp"
-                android:orientation="vertical">
+                android:text="@string/parking_location_description"
+                android:textColor="@android:color/darker_gray" />
 
-                <TextView
-                    android:id="@+id/tvLocationSlots"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.8"
-                    android:text="@string/parking_location_description"
-                    android:textColor="@android:color/darker_gray" />
-
-                <TextView
-                    android:id="@+id/tvLocationRange"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:layout_weight="0.2"
-                    android:gravity="bottom"
-                    android:text="@string/parking_location_range"
-                    android:textColor="?colorPrimary"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
 
         </LinearLayout>
-
-        <ImageView
-            android:id="@+id/iv_bookmark"
-            android:layout_width="30dp"
-            android:layout_height="44dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/baseline_delete_outline_24" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

@@ -8,11 +8,14 @@ import android.view.ViewGroup
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
 import com.scifi.markirapp.databinding.FragmentProfileBinding
+import com.scifi.markirapp.ui.adapter.FavoriteAdapter
+import com.scifi.markirapp.ui.viewmodel.FavoriteViewModel
+import com.scifi.markirapp.utils.FirebaseAuthUtils
 import com.scifi.markirapp.utils.InterfaceUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +24,9 @@ import kotlinx.coroutines.launch
 class ProfileFragment : Fragment() {
 
     private lateinit var binding: FragmentProfileBinding
-    private lateinit var auth: FirebaseAuth
+    private val auth: FirebaseAuth by lazy { FirebaseAuthUtils.instance }
+    private lateinit var favoriteAdapter: FavoriteAdapter
+    private val favoriteViewModel by viewModels<FavoriteViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,30 +39,24 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        auth = Firebase.auth
         setupAction()
-
+        setupRecyclerView()
+        observeViewModel()
     }
 
     private fun setupAction() {
-        binding.apply {
-            btnLogout.setOnClickListener {
-                signOut()
+            binding.apply {
+                btnLogout.setOnClickListener {
+                    signOut()
+                }
+                tvName.text = auth.currentUser?.displayName
+                tvEmail.text = auth.currentUser?.email
+                Glide.with(this@ProfileFragment)
+                    .load(auth.currentUser?.photoUrl)
+                    .into(ivAvatar)
             }
-            binding.btnFav.setOnClickListener {
-                goToFavoriteActivity()
-            }
-            tvName.text = auth.currentUser?.displayName
-            tvEmail.text = auth.currentUser?.email
-            Glide.with(this@ProfileFragment)
-                .load(auth.currentUser?.photoUrl)
-                .into(ivAvatar)
-        }
     }
-    private fun goToFavoriteActivity() {
-        val intent = Intent(requireActivity(), FavoriteActivity::class.java)
-        startActivity(intent)
-    }
+
     private fun signOut() {
         InterfaceUtils.showAlert(
             requireActivity(),
@@ -76,7 +75,20 @@ class ProfileFragment : Fragment() {
             secondaryButtonText = "No"
         )
     }
-    companion object{
-        const val  LOCATON_EXTRA = "location_extra"
+
+    private fun setupRecyclerView() {
+        favoriteAdapter = FavoriteAdapter(mutableListOf())
+        binding.rvFav.apply {
+            adapter = favoriteAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
+    }
+
+    private fun observeViewModel() {
+        favoriteViewModel.favoriteLocations.observe(viewLifecycleOwner) { locations ->
+            favoriteAdapter.updateData(locations)
+            binding.viewEmpty.visibility = if (locations.isEmpty()) View.VISIBLE else View.GONE
+            binding.rvFav.visibility = if (locations.isEmpty()) View.GONE else View.VISIBLE
+        }
     }
 }

@@ -300,7 +300,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         val userLocation = currentLocation?.let { LatLng(it.latitude, it.longitude) } ?: return
         val apiKey = BuildConfig.PLACES_API_KEY
-        val radius = 1000
+        val radius = 10000
 
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
@@ -322,48 +322,43 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             val placesService = MapsApiConfig.getMapsApiService()
             val parkingLocations = mutableListOf<ParkingLocation>()
 
-            parkingPlaceTypes.forEach { type ->
-                val response = placesService.getPlaces(
-                    "${userLocation.latitude},${userLocation.longitude}",
-                    radius,
-                    type,
-                    apiKey
-                )
-                if (response.isSuccessful) {
-                    response.body()?.results?.forEach { place ->
-                        val location = place.geometry.location
-                        val latLng = LatLng(location.latitude, location.longitude)
-                        val distance = FloatArray(1)
-                        Location.distanceBetween(
-                            userLocation.latitude,
-                            userLocation.longitude,
-                            latLng.latitude,
-                            latLng.longitude,
-                            distance
-                        )
-                        if (distance[0] <= radius) {
-                            if (isAdded) {
-                                withContext(Dispatchers.Main) {
-                                    addMarkerForPlace(latLng, place.name)
-                                    parkingLocations.add(
-                                        createParkingLocation(
-                                            place,
-                                            userLocation,
-                                            latLng
-                                        )
+            val query = "Mall OR Plaza"
+            val response = placesService.getPlaces(query, "${userLocation.latitude},${userLocation.longitude}", radius, apiKey)
+
+            if (response.isSuccessful) {
+                response.body()?.results?.forEach { place ->
+                    val location = place.geometry.location
+                    val latLng = LatLng(location.latitude, location.longitude)
+                    val distance = FloatArray(1)
+                    Location.distanceBetween(
+                        userLocation.latitude,
+                        userLocation.longitude,
+                        latLng.latitude,
+                        latLng.longitude,
+                        distance
+                    )
+                    if (distance[0] <= radius && (place.name.contains("Mall", ignoreCase = true) || place.name.contains("Plaza", ignoreCase = true))) {
+                        if (isAdded) {
+                            withContext(Dispatchers.Main) {
+                                addMarkerForPlace(latLng, place.name)
+                                parkingLocations.add(
+                                    createParkingLocation(
+                                        place,
+                                        userLocation,
+                                        latLng
                                     )
-                                }
+                                )
                             }
                         }
                     }
-                } else {
-                    if (isAdded) {
-                        withContext(Dispatchers.Main) {
-                            InterfaceUtils.showAlert(
-                                context = requireContext(),
-                                message = "Error getting places for type: $type"
-                            )
-                        }
+                }
+            } else {
+                if (isAdded) {
+                    withContext(Dispatchers.Main) {
+                        InterfaceUtils.showAlert(
+                            context = requireContext(),
+                            message = "Error getting places"
+                        )
                     }
                 }
             }
@@ -392,6 +387,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             ""
         }
         return ParkingLocation(
+            placeId = place.placeId,
             name = place.name,
             latLng = latLng,
             slotsAvailable = 10,
@@ -401,7 +397,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         )
     }
 
-    private fun calculateDistance(userLocation: LatLng, placeLatLng: LatLng): Int {
+    private fun calculateDistance(userLocation: LatLng, placeLatLng: LatLng): Float {
         val userLocationObj = Location("").apply {
             latitude = userLocation.latitude
             longitude = userLocation.longitude
@@ -410,8 +406,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             latitude = placeLatLng.latitude
             longitude = placeLatLng.longitude
         }
-        val distanceInMeters = userLocationObj.distanceTo(placeLocation)
-        return distanceInMeters.toInt()
+        return userLocationObj.distanceTo(placeLocation)
     }
 
     private fun addMarkerForPlace(latLng: LatLng, placeName: String?) {

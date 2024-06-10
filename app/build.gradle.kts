@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.android.maps.utils)
     implementation(libs.firebase.database)
+    implementation(libs.firebase.database.ktx)
 //    debugImplementation(libs.leakcanary.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

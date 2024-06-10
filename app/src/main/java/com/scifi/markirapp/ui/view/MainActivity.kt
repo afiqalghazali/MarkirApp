@@ -5,27 +5,27 @@ import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
 import com.scifi.markirapp.R
 import com.scifi.markirapp.databinding.ActivityMainBinding
+import com.scifi.markirapp.utils.FirebaseAuthUtils
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var auth: FirebaseAuth
+    private val auth: FirebaseAuth by lazy { FirebaseAuthUtils.instance }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupAction()
         setupBottomNavigation()
         if (savedInstanceState == null) {
             binding.bottomNavigation.selectedItemId = R.id.nav_maps
 
-            auth = Firebase.auth
             val firebaseUser = auth.currentUser
             if (firebaseUser == null) {
                 startActivity(Intent(this, WelcomeActivity::class.java))
@@ -33,6 +33,13 @@ class MainActivity : AppCompatActivity() {
                 return
             }
 
+        }
+    }
+
+    private fun setupAction() {
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            FirebaseAuthUtils.sessionEndedAlert(this)
         }
     }
 
@@ -49,7 +56,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
 
-                R.id.nav_Account -> {
+                R.id.nav_profile -> {
                     replaceFragment(ProfileFragment())
                     true
                 }

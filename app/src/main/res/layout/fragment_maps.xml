@@ -53,7 +53,7 @@
             android:focusable="false"
             android:src="@drawable/baseline_close_24"
             app:backgroundTint="@color/white"
-            app:tint="@color/warning" />
+            app:tint="@color/dark_gray" />
 
     </androidx.cardview.widget.CardView>
 

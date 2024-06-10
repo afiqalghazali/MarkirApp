@@ -13,28 +13,26 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
-import com.google.firebase.Firebase
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.auth
 import com.scifi.markirapp.R
 import com.scifi.markirapp.databinding.ActivityWelcomeBinding
+import com.scifi.markirapp.utils.FirebaseAuthUtils
 import com.scifi.markirapp.utils.InterfaceUtils
 import kotlinx.coroutines.launch
 
 class WelcomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityWelcomeBinding
-    private lateinit var auth: FirebaseAuth
+    private val auth: FirebaseAuth by lazy { FirebaseAuthUtils.instance }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        auth = Firebase.auth
         binding.btnLogin.setOnClickListener {
             signIn()
         }
