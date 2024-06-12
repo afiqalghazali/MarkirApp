@@ -19,8 +19,8 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.scifi.markirapp.R
 import com.scifi.markirapp.databinding.ActivityWelcomeBinding
+import com.scifi.markirapp.utils.AppsUtils
 import com.scifi.markirapp.utils.FirebaseAuthUtils
-import com.scifi.markirapp.utils.InterfaceUtils
 import kotlinx.coroutines.launch
 
 class WelcomeActivity : AppCompatActivity() {
@@ -39,28 +39,37 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     private fun signIn() {
-        val credentialManager = CredentialManager.create(this)
-        val googleIdOption = GetGoogleIdOption.Builder()
-            .setFilterByAuthorizedAccounts(false)
-            .setServerClientId(getString(R.string.your_web_client_id))
-            .build()
-        val request = GetCredentialRequest.Builder()
-            .addCredentialOption(googleIdOption)
-            .build()
+        if(!AppsUtils.isNetworkAvailable(this)) {
+            AppsUtils.showAlert(
+                this,
+                "No Internet Connection.",
+                isWarning = true,
+                primaryButtonText = "OK"
+            )
+        }  else {
+            val credentialManager = CredentialManager.create(this)
+            val googleIdOption = GetGoogleIdOption.Builder()
+                .setFilterByAuthorizedAccounts(false)
+                .setServerClientId(getString(R.string.your_web_client_id))
+                .build()
+            val request = GetCredentialRequest.Builder()
+                .addCredentialOption(googleIdOption)
+                .build()
 
 
-        lifecycleScope.launch {
-            try {
-                val result: GetCredentialResponse = credentialManager.getCredential(
-                    request = request,
-                    context = this@WelcomeActivity,
-                )
-                handleSignIn(result)
-            } catch (e: GetCredentialException) {
-                InterfaceUtils.showAlert(
-                    this@WelcomeActivity,
-                    e.message.toString()
-                )
+            lifecycleScope.launch {
+                try {
+                    val result: GetCredentialResponse = credentialManager.getCredential(
+                        request = request,
+                        context = this@WelcomeActivity,
+                    )
+                    handleSignIn(result)
+                } catch (e: GetCredentialException) {
+                    AppsUtils.showAlert(
+                        this@WelcomeActivity,
+                        e.message.toString()
+                    )
+                }
             }
         }
     }
@@ -74,7 +83,7 @@ class WelcomeActivity : AppCompatActivity() {
                             GoogleIdTokenCredential.createFrom(credential.data)
                         firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
                     } catch (e: GoogleIdTokenParsingException) {
-                        InterfaceUtils.showAlert(
+                        AppsUtils.showAlert(
                             this,
                             e.message.toString()
                         )

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.scifi.markirapp.R
 import com.scifi.markirapp.databinding.ActivityMainBinding
+import com.scifi.markirapp.utils.AppsUtils
 import com.scifi.markirapp.utils.FirebaseAuthUtils
 
 class MainActivity : AppCompatActivity() {
@@ -23,16 +24,29 @@ class MainActivity : AppCompatActivity() {
 
         setupAction()
         setupBottomNavigation()
+
         if (savedInstanceState == null) {
-            binding.bottomNavigation.selectedItemId = R.id.nav_maps
+            if (!AppsUtils.isNetworkAvailable(this)) {
+                AppsUtils.showAlert(
+                    this,
+                    "No Internet Connection.",
+                    isWarning = true,
+                    primaryButtonText = "OK",
+                    onPrimaryButtonClick = {
+                        startActivity(Intent(this, WelcomeActivity::class.java))
+                        finish()
+                    }
+                )
+            } else {
+                binding.bottomNavigation.selectedItemId = R.id.nav_maps
 
-            val firebaseUser = auth.currentUser
-            if (firebaseUser == null) {
-                startActivity(Intent(this, WelcomeActivity::class.java))
-                finish()
-                return
+                val firebaseUser = auth.currentUser
+                if (firebaseUser == null) {
+                    startActivity(Intent(this, WelcomeActivity::class.java))
+                    finish()
+                    return
+                }
             }
-
         }
     }
 

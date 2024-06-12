@@ -49,7 +49,7 @@ import com.scifi.markirapp.data.network.MapsApiConfig
 import com.scifi.markirapp.databinding.FragmentMapsBinding
 import com.scifi.markirapp.ui.custom.CustomInfoView
 import com.scifi.markirapp.ui.viewmodel.ParkingViewModel
-import com.scifi.markirapp.utils.InterfaceUtils
+import com.scifi.markirapp.utils.AppsUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancelChildren
@@ -162,7 +162,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             try {
                 mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(it, R.raw.maps_style_light))
             } catch (e: Resources.NotFoundException) {
-                InterfaceUtils.showAlert(
+                AppsUtils.showAlert(
                     context = it,
                     message = "Light style not found"
                 )
@@ -181,7 +181,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     )
                 } catch (e: Resources.NotFoundException) {
                     val mode = if (isDarkMode) "Dark" else "Light"
-                    InterfaceUtils.showAlert(
+                    AppsUtils.showAlert(
                         context = requireContext(),
                         message = "$mode style not found"
                     )
@@ -278,7 +278,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            InterfaceUtils.showAlert(
+            AppsUtils.showAlert(
                 context = requireContext(),
                 message = "Location permissions are not granted"
             )
@@ -311,7 +311,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            InterfaceUtils.showAlert(
+            AppsUtils.showAlert(
                 context = requireContext(),
                 message = "Location permissions are not granted"
             )
@@ -355,7 +355,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             } else {
                 if (isAdded) {
                     withContext(Dispatchers.Main) {
-                        InterfaceUtils.showAlert(
+                        AppsUtils.showAlert(
                             context = requireContext(),
                             message = "Error getting places"
                         )
@@ -484,7 +484,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                                     )
                                 }
                             } else {
-                                InterfaceUtils.showAlert(
+                                AppsUtils.showAlert(
                                     context = requireContext(),
                                     message = "No routes found"
                                 )
@@ -492,7 +492,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                         }
                     }
                 } else if (isAdded) {
-                    InterfaceUtils.showAlert(
+                    AppsUtils.showAlert(
                         context = requireContext(),
                         message = "Error getting directions"
                     )

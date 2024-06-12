@@ -13,7 +13,7 @@ object FirebaseAuthUtils {
     }
 
     fun sessionEndedAlert(activity: Activity) {
-        InterfaceUtils.showAlert(
+        AppsUtils.showAlert(
             activity,
             isWarning = true,
             message = "Your session has ended. Please log in again",

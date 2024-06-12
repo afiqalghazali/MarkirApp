@@ -16,7 +16,7 @@ import com.scifi.markirapp.databinding.FragmentProfileBinding
 import com.scifi.markirapp.ui.adapter.FavoriteAdapter
 import com.scifi.markirapp.ui.viewmodel.FavoriteViewModel
 import com.scifi.markirapp.utils.FirebaseAuthUtils
-import com.scifi.markirapp.utils.InterfaceUtils
+import com.scifi.markirapp.utils.AppsUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,7 +58,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun signOut() {
-        InterfaceUtils.showAlert(
+        AppsUtils.showAlert(
             requireActivity(),
             isWarning = true,
             message = "Are you sure you want to sign out?",

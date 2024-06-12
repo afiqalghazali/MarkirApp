@@ -18,8 +18,8 @@ import com.scifi.markirapp.R
 import com.scifi.markirapp.data.model.ParkingLocation
 import com.scifi.markirapp.databinding.ActivityParkingSlotBinding
 import com.scifi.markirapp.ui.adapter.ParkingViewAdapter
+import com.scifi.markirapp.utils.AppsUtils
 import com.scifi.markirapp.utils.FirebaseAuthUtils
-import com.scifi.markirapp.utils.InterfaceUtils
 
 class ParkingSlotActivity : AppCompatActivity() {
 
@@ -40,7 +40,7 @@ class ParkingSlotActivity : AppCompatActivity() {
         parkingLocation = intent.getParcelableExtra("parkingLocation")
 
         if (parkingLocation == null) {
-            InterfaceUtils.showAlert(
+            AppsUtils.showAlert(
                 this,
                 "No parking location data available"
             )
@@ -98,7 +98,7 @@ class ParkingSlotActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                InterfaceUtils.showAlert(this@ParkingSlotActivity, "Failed to check bookmark status: ${error.message}")
+                AppsUtils.showAlert(this@ParkingSlotActivity, "Failed to check bookmark status: ${error.message}")
             }
         })
     }
@@ -125,7 +125,7 @@ class ParkingSlotActivity : AppCompatActivity() {
             location.placeId?.let {
                 userFavoritesRef.child(it).setValue(location) { error, _ ->
                     if (error != null) {
-                        InterfaceUtils.showAlert(this, "Failed to save parking location: ${error.message}")
+                        AppsUtils.showAlert(this, "Failed to save parking location: ${error.message}")
                     } else {
                         Toast.makeText(this, "Location saved", Toast.LENGTH_SHORT).show()
                     }
@@ -146,7 +146,7 @@ class ParkingSlotActivity : AppCompatActivity() {
                     if (task.isSuccessful) {
                         Toast.makeText(this, "Location removed", Toast.LENGTH_SHORT).show()
                     } else {
-                        InterfaceUtils.showAlert(this, "Failed to remove parking location")
+                        AppsUtils.showAlert(this, "Failed to remove parking location")
                     }
                 }
             }
