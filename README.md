@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img max-height="172" width="80%" src="[media/title.png](https://github.com/afiqalghazali/MarkirApp/assets/90079738/576bd5d5-6750-46da-8e74-374e4a2bde9f)"/>
+  <img height="144" width="80%" src="https://github.com/afiqalghazali/MarkirApp/assets/90079738/576bd5d5-6750-46da-8e74-374e4a2bde9f"/>
 </p>
 
 
