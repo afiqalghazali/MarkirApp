@@ -11,7 +11,7 @@ Markir is an application that aims to develop a cloud detection and visualizatio
 
 ## 📸 Screenshots
 
-![App Screenshot](https://github.com/afiqalghazali/MarkirApp/assets/90079738/3ff793a1-af79-452a-8d99-fa2db51e7b55)
+![App Screenshot](https://github.com/afiqalghazali/MarkirApp/assets/90079738/269c938b-1f8d-4b53-81b3-9d124b734ed3)
 
 
 ## 🚀 Features
