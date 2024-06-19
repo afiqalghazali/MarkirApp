@@ -1,5 +1,5 @@
 
-![Logo](https://cdn.discordapp.com/attachments/1020601540257521674/1252818178929852496/Markir_2_1.png?ex=6673995a&is=667247da&hm=92c0c1d8f7aad907b7f4f656ce27d6c7f8cefbb7754d0cf179251b83ea5f113b&)
+![Logo](https://github.com/afiqalghazali/MarkirApp/assets/90079738/576bd5d5-6750-46da-8e74-374e4a2bde9f)
 
 
 <h1 align="center">Markir: Match Parking Area</h1>
