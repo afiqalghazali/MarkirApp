@@ -22,7 +22,8 @@ class FavoriteViewModel : ViewModel() {
 
     private fun loadFavoriteLocations() {
         val userId = Firebase.auth.currentUser?.uid ?: return
-        val db = FirebaseDatabase.getInstance().reference.child(USERS_CHILD).child(userId).child(FAVORITES_CHILD)
+        val db = FirebaseDatabase.getInstance().reference.child(USERS_CHILD).child(userId)
+            .child(FAVORITES_CHILD)
 
         db.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -41,9 +42,8 @@ class FavoriteViewModel : ViewModel() {
         val name = child("name").getValue(String::class.java)
         val latitude = child("latLng").child("latitude").getValue(Double::class.java)
         val longitude = child("latLng").child("longitude").getValue(Double::class.java)
-        val latLng = if (latitude != null && longitude != null) LatLng(latitude, longitude) else null
-        val slotsAvailable = child("slotsAvailable").getValue(Int::class.java)
-        val distance = child("distance").getValue(Float::class.java)
+        val latLng =
+            if (latitude != null && longitude != null) LatLng(latitude, longitude) else null
         val imageUrl = child("imageUrl").getValue(String::class.java) ?: ""
         val isBookmarked = child("isBookmarked").getValue(Boolean::class.java) ?: false
 
@@ -52,8 +52,6 @@ class FavoriteViewModel : ViewModel() {
                 placeId = placeId,
                 name = name,
                 latLng = latLng,
-                slotsAvailable = slotsAvailable,
-                distance = distance,
                 imageUrl = imageUrl,
                 isBookmarked = isBookmarked
             )

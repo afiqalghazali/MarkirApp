@@ -7,8 +7,8 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-object MapsApiConfig {
-    fun getMapsApiService(): MapsApiService {
+object ApiConfig {
+    fun getApiService(): ApiService {
         val loggingInterceptor = if (BuildConfig.DEBUG) {
             HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
         } else {
@@ -25,10 +25,10 @@ object MapsApiConfig {
             .addInterceptor(authInterceptor)
             .build()
         val retrofit = Retrofit.Builder()
-            .baseUrl(BuildConfig.MAPS_API_URL)
+            .baseUrl(BuildConfig.MARKIR_API_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
-        return retrofit.create(MapsApiService::class.java)
+        return retrofit.create(ApiService::class.java)
     }
 }

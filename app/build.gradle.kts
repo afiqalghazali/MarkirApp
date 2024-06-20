@@ -18,13 +18,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "API_KEY", "\"AIzaSyASBn8-KqQuQzCmOWsnIAzXey-rT2dzQIo\"")
-        buildConfigField(
-            "String",
-            "DIRECTIONS_API_KEY",
-            "\"AIzaSyD4MtMBInFRcuhMs0FI4BkEttFXsGJN7ys\""
-        )
-        buildConfigField("String", "PLACES_API_KEY", "\"AIzaSyBxmj04Zn0YHrEt6uHkojiinLxFGsoQsPI\"")
     }
 
     buildTypes {
@@ -49,6 +42,21 @@ android {
     }
 }
 
+secrets {
+    // Optionally specify a different file name containing your secrets.
+    // The plugin defaults to "local.properties"
+    propertiesFileName = "local.properties"
+
+    // A properties file containing default secret values. This file can be
+    // checked in version control.
+    defaultPropertiesFileName = "local.defaults.properties"
+
+    // Configure which keys should be ignored by the plugin by providing regular expressions.
+    // "sdk.dir" is ignored by default.
+    ignoreList.add("keyToIgnore") // Ignore the key "keyToIgnore"
+    ignoreList.add("sdk.*")       // Ignore all keys matching the regexp "sdk.*"
+}
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -71,6 +79,7 @@ dependencies {
     implementation(libs.android.maps.utils)
     implementation(libs.firebase.database)
     implementation(libs.firebase.database.ktx)
+    implementation(libs.androidx.swiperefreshlayout)
 //    debugImplementation(libs.leakcanary.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

@@ -4,9 +4,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -16,8 +15,10 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.scifi.markirapp.R
 import com.scifi.markirapp.data.model.ParkingLocation
+import com.scifi.markirapp.data.network.response.SlotResponse
 import com.scifi.markirapp.databinding.ActivityParkingSlotBinding
 import com.scifi.markirapp.ui.adapter.ParkingViewAdapter
+import com.scifi.markirapp.ui.viewmodel.SlotsViewModel
 import com.scifi.markirapp.utils.AppsUtils
 import com.scifi.markirapp.utils.FirebaseAuthUtils
 
@@ -26,6 +27,7 @@ class ParkingSlotActivity : AppCompatActivity() {
     private lateinit var binding: ActivityParkingSlotBinding
     private val auth: FirebaseAuth by lazy { FirebaseAuthUtils.instance }
     private var parkingLocation: ParkingLocation? = null
+    private val slotsViewModel by viewModels<SlotsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,18 +48,14 @@ class ParkingSlotActivity : AppCompatActivity() {
             )
             finish()
             return
+
         }
 
         checkIfBookmarked(parkingLocation?.placeId)
 
-        val floors = listOf(1, 2)
-        val parkingViewAdapter = ParkingViewAdapter(this, floors)
-        val viewPager: ViewPager2 = binding.viewPager
-        viewPager.adapter = parkingViewAdapter
-        val tabs: TabLayout = binding.tabs
-        TabLayoutMediator(tabs, viewPager) { tab, position ->
-            tab.text = getString(R.string.count_floor, floors[position])
-        }.attach()
+        binding.swipeRefresh.setOnRefreshListener {
+            slotsViewModel.fetchParkingSlots()
+        }
 
         binding.apply {
             toolbar.setNavigationOnClickListener {
@@ -72,6 +70,13 @@ class ParkingSlotActivity : AppCompatActivity() {
                 toggleButtons(false)
             }
         }
+
+        slotsViewModel.parkingSlots.observe(this) { parkingSlots ->
+            setupViewPager(parkingSlots)
+            binding.swipeRefresh.isRefreshing = false
+        }
+
+        slotsViewModel.fetchParkingSlots()
     }
 
     private fun setupAction() {
@@ -89,7 +94,8 @@ class ParkingSlotActivity : AppCompatActivity() {
         val userId = getUserId()
         if (parkingLocationId == null) return
         val db = Firebase.database
-        val favoritesRef = db.reference.child(USERS_CHILD).child(userId).child(FAVORITES_CHILD).child(parkingLocationId)
+        val favoritesRef = db.reference.child(USERS_CHILD).child(userId).child(FAVORITES_CHILD)
+            .child(parkingLocationId)
 
         favoritesRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -98,11 +104,13 @@ class ParkingSlotActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                AppsUtils.showAlert(this@ParkingSlotActivity, "Failed to check bookmark status: ${error.message}")
+                AppsUtils.showAlert(
+                    this@ParkingSlotActivity,
+                    "Failed to check bookmark status: ${error.message}"
+                )
             }
         })
     }
-
 
     private fun toggleButtons(isBookmarked: Boolean) {
         if (isBookmarked) {
@@ -112,6 +120,15 @@ class ParkingSlotActivity : AppCompatActivity() {
             binding.btnSave.visibility = View.VISIBLE
             binding.btnRemove.visibility = View.GONE
         }
+    }
+
+    private fun setupViewPager(parkingSlots: List<SlotResponse?>?) {
+        val floors = parkingSlots?.mapNotNull { it?.floor }?.distinct()
+        val parkingViewAdapter = floors?.let { ParkingViewAdapter(this, it, parkingSlots) }
+        binding.viewPager.adapter = parkingViewAdapter
+        TabLayoutMediator(binding.tabs, binding.viewPager) { tab, position ->
+            tab.text = getString(R.string.count_floor, floors?.get(position) ?: 1)
+        }.attach()
     }
 
     private fun saveParkingLocation() {
@@ -125,7 +142,10 @@ class ParkingSlotActivity : AppCompatActivity() {
             location.placeId?.let {
                 userFavoritesRef.child(it).setValue(location) { error, _ ->
                     if (error != null) {
-                        AppsUtils.showAlert(this, "Failed to save parking location: ${error.message}")
+                        AppsUtils.showAlert(
+                            this,
+                            "Failed to save parking location: ${error.message}"
+                        )
                     } else {
                         Toast.makeText(this, "Location saved", Toast.LENGTH_SHORT).show()
                     }
@@ -158,3 +178,4 @@ class ParkingSlotActivity : AppCompatActivity() {
         const val FAVORITES_CHILD = "favorites"
     }
 }
+

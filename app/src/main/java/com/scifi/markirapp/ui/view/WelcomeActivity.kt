@@ -39,14 +39,14 @@ class WelcomeActivity : AppCompatActivity() {
     }
 
     private fun signIn() {
-        if(!AppsUtils.isNetworkAvailable(this)) {
+        if (!AppsUtils.isNetworkAvailable(this)) {
             AppsUtils.showAlert(
                 this,
                 "No Internet Connection.",
                 isWarning = true,
                 primaryButtonText = "OK"
             )
-        }  else {
+        } else {
             val credentialManager = CredentialManager.create(this)
             val googleIdOption = GetGoogleIdOption.Builder()
                 .setFilterByAuthorizedAccounts(false)

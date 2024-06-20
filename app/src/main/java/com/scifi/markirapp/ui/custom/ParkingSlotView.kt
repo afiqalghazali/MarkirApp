@@ -7,10 +7,17 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import com.scifi.markirapp.R
-import com.scifi.markirapp.data.model.ParkingSlot
+import com.scifi.markirapp.ui.viewmodel.SlotsViewModel
 
 class ParkingSlotView(context: Context, attrs: AttributeSet) : View(context, attrs) {
+
+    private val slotsViewModel: SlotsViewModel by lazy {
+        ViewModelProvider(context as ViewModelStoreOwner)[SlotsViewModel::class.java]
+    }
 
     private val paint = Paint().apply {
         style = Paint.Style.STROKE
@@ -20,53 +27,68 @@ class ParkingSlotView(context: Context, attrs: AttributeSet) : View(context, att
 
     private val carDrawable: Drawable? = ContextCompat.getDrawable(context, R.drawable.car)
 
-    var parkingSlots: List<ParkingSlot> = listOf()
-        set(value) {
-            field = value
+    private var slotAspectRatio = 1.5f
+
+    init {
+        setPadding(4, 4, 4, 4)
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        slotsViewModel.parkingSlots.observe(context as LifecycleOwner) { slots ->
+            parkingSlots = slots ?: emptyList()
             requestLayout()
             invalidate()
         }
+    }
+
+    var parkingSlots = slotsViewModel.parkingSlots.value ?: emptyList()
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val desiredWidth = MeasureSpec.getSize(widthMeasureSpec)
-        val rows = (parkingSlots.size + 7) / 8
-        val slotHeight = desiredWidth / 8 * 1.25f
-        val desiredHeight = (rows * slotHeight * 1.5f).toInt()
-        setMeasuredDimension(desiredWidth, desiredHeight)
+        val desiredWidth = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight
+        val columns = parkingSlots.mapNotNull { it?.column }.maxOrNull() ?: 1
+        val rows = parkingSlots.mapNotNull { it?.row }.maxOrNull() ?: 1
+        val slotHeight = desiredWidth / columns * slotAspectRatio
+        val desiredHeight =
+            (rows * slotHeight * (slotAspectRatio + 0.25f)).toInt() + paddingTop + paddingBottom
+        setMeasuredDimension(
+            resolveSize(desiredWidth + paddingLeft + paddingRight, widthMeasureSpec),
+            resolveSize(desiredHeight, heightMeasureSpec)
+        )
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        val slotWidth = width / 8f
-        val slotHeight = slotWidth * 1.25f
+        val columns = parkingSlots.mapNotNull { it?.column }.maxOrNull() ?: 1
+        val slotWidth = (width - paddingLeft - paddingRight) / columns.toFloat()
+        val slotHeight = slotWidth * slotAspectRatio
 
-        parkingSlots.forEachIndexed { index, slot ->
-            val row = index / 8
-            val column = index % 8
-            val top = row * slotHeight * 1.0f + (row / 2) * slotHeight * 1.25f
-            val left = column * slotWidth
+        parkingSlots.forEach { slot ->
+            val row = (slot?.row ?: 1) - 1
+            val column = (slot?.column ?: 1) - 1
+            val top = paddingTop + row * slotHeight * slotAspectRatio
+            val left = paddingLeft + column * slotWidth
             val right = left + slotWidth
             val bottom = top + slotHeight
 
             canvas.drawLine(left, top, left, bottom, paint)
             canvas.drawLine(right, top, right, bottom, paint)
-            if (row % 2 == 0) {
-                canvas.drawLine(left, bottom, right, bottom, paint)
-            }
+            canvas.drawLine(left, top, right, top, paint)
+            canvas.drawLine(left, bottom, right, bottom, paint)
 
-            val horizontalInset = 32f
-            val verticalInset = 16f
+            val horizontalInset = slotWidth * 0.2f
+            val verticalInset = slotHeight * 0.1f
             val drawableLeft = (left + horizontalInset).toInt()
             val drawableTop = (top + verticalInset).toInt()
             val drawableRight = (right - horizontalInset).toInt()
             val drawableBottom = (bottom - verticalInset).toInt()
 
-            if (slot.isOccupied) {
+            if (slot?.occupied == 1) {
                 carDrawable?.apply {
                     setBounds(drawableLeft, drawableTop, drawableRight, drawableBottom)
                     draw(canvas)
 
-                    if (row % 2 == 0) {
+                    if ((row + 1) % 2 == 0) {
                         val canvasSave = canvas.save()
                         val centerX = (drawableLeft + drawableRight) / 2f
                         val centerY = (drawableTop + drawableBottom) / 2f
@@ -81,7 +103,7 @@ class ParkingSlotView(context: Context, attrs: AttributeSet) : View(context, att
                 val strokeColor = ContextCompat.getColor(context, R.color.primary_blue)
                 val textColor = ContextCompat.getColor(context, R.color.primary_blue)
                 val strokeWidthValue = 4f
-                val textSizeValue = 40f
+                val textSizeValue = slotWidth * 0.35f
 
                 paint.apply {
                     style = Paint.Style.FILL
@@ -124,12 +146,14 @@ class ParkingSlotView(context: Context, attrs: AttributeSet) : View(context, att
                     (drawableLeft + drawableRight) / 2f,
                     (drawableTop + drawableBottom) / 2f
                 )
-                canvas.drawText(
-                    slot.id,
-                    (drawableLeft + drawableRight) / 2f,
-                    (drawableTop + drawableBottom) / 2f - (paint.descent() + paint.ascent()) / 2,
-                    paint
-                )
+                slot?.num?.let {
+                    canvas.drawText(
+                        it,
+                        (drawableLeft + drawableRight) / 2f,
+                        (drawableTop + drawableBottom) / 2f - (paint.descent() + paint.ascent()) / 2,
+                        paint
+                    )
+                }
                 canvas.restore()
             }
         }

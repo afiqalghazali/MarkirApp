@@ -4,41 +4,25 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.location.Location
 import android.os.Bundle
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.DrawableRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
-import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.maps.android.PolyUtil
@@ -48,24 +32,20 @@ import com.scifi.markirapp.data.model.ParkingLocation
 import com.scifi.markirapp.data.network.MapsApiConfig
 import com.scifi.markirapp.databinding.FragmentMapsBinding
 import com.scifi.markirapp.ui.custom.CustomInfoView
+import com.scifi.markirapp.ui.viewmodel.LocationViewModel
 import com.scifi.markirapp.ui.viewmodel.ParkingViewModel
 import com.scifi.markirapp.utils.AppsUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.lang.ref.WeakReference
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private var _binding: FragmentMapsBinding? = null
     private val binding get() = _binding!!
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var placesClient: PlacesClient
-    private lateinit var locationCallback: LocationCallback
-    private lateinit var locationRequest: LocationRequest
+    private val locationViewModel by activityViewModels<LocationViewModel>()
     private val parkingViewModel by activityViewModels<ParkingViewModel>()
     private var currentLocation: LatLng? = null
     private var mapFragment: SupportMapFragment? = null
@@ -83,8 +63,13 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState)
         if (isAdded) {
             setupMap()
-            setupLocationServices()
             setupAction()
+        }
+        locationViewModel.currentLocation.observe(viewLifecycleOwner) { location ->
+            location?.let {
+                currentLocation = it
+                updateLocation(it)
+            }
         }
     }
 
@@ -94,21 +79,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             childFragmentManager.beginTransaction().replace(R.id.map, mapFragment!!).commit()
             mapFragment?.getMapAsync(this)
         }
-    }
-
-    private fun setupLocationServices() {
-        context?.let {
-            fusedLocationClient = LocationServices.getFusedLocationProviderClient(it)
-            Places.initialize(it, BuildConfig.API_KEY)
-            placesClient = Places.createClient(it)
-        }
-
-        locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000L)
-            .setMinUpdateIntervalMillis(5000L)
-            .setMinUpdateDistanceMeters(500f)
-            .build()
-
-        locationCallback = MapsFragmentLocationCallback(this)
     }
 
     private fun setupAction() {
@@ -151,9 +121,20 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            mMap.isMyLocationEnabled = true
+            mMap.uiSettings.isMyLocationButtonEnabled = false
+        } else {
+            (activity as MainActivity).requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+
+        setMapStyle()
         setInfoWindow()
         getMyLocation()
-        setMapStyle()
     }
 
     private fun setMapStyle() {
@@ -206,8 +187,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     .position(marker.position)
                     .title(marker.title)
                     .icon(
-                        vectorToBitmap(
+                        AppsUtils.vectorToBitmap(
                             R.drawable.parking_icon,
+                            requireContext(),
                             60,
                             60
                         )
@@ -220,79 +202,18 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun vectorToBitmap(
-        @DrawableRes id: Int,
-        width: Int,
-        height: Int,
-    ): BitmapDescriptor {
-        val vectorDrawable = context?.let { ResourcesCompat.getDrawable(it.resources, id, null) }
-            ?: return BitmapDescriptorFactory.defaultMarker()
-
-        val bitmap = Bitmap.createBitmap(
-            width,
-            height,
-            Bitmap.Config.ARGB_8888
-        )
-
-        val canvas = Canvas(bitmap)
-        vectorDrawable.setBounds(0, 0, canvas.width, canvas.height)
-        vectorDrawable.draw(canvas)
-
-        return BitmapDescriptorFactory.fromBitmap(bitmap)
-    }
-
-
-    private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            if (isGranted) getMyLocation()
-        }
-
     private fun getMyLocation() {
-        if (!isAdded || context == null) return
-
-        if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            enableMyLocation()
-            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-                location?.let { updateLocation(it) }
-            }
-            fusedLocationClient.requestLocationUpdates(
-                locationRequest,
-                locationCallback,
-                Looper.getMainLooper()
-            )
-        } else {
-            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        if (this::mMap.isInitialized) {
+            currentLocation?.let { updateLocation(it) }
         }
     }
 
-    private fun enableMyLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            AppsUtils.showAlert(
-                context = requireContext(),
-                message = "Location permissions are not granted"
-            )
-            return
+    private fun updateLocation(location: LatLng) {
+        if (this::mMap.isInitialized) {
+            currentLocation = location
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 16f))
+            addParkingMarker()
         }
-        mMap.isMyLocationEnabled = true
-        mMap.uiSettings.isMyLocationButtonEnabled = false
-    }
-
-    private fun updateLocation(location: Location) {
-        val currentLatLng = LatLng(location.latitude, location.longitude)
-        currentLocation = currentLatLng
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 16f))
-        addParkingMarker()
     }
 
     private fun addParkingMarker() {
@@ -302,28 +223,17 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         val apiKey = BuildConfig.PLACES_API_KEY
         val radius = 10000
 
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            AppsUtils.showAlert(
-                context = requireContext(),
-                message = "Location permissions are not granted"
-            )
-            return
-        }
-
         CoroutineScope(Dispatchers.IO).launch {
             val placesService = MapsApiConfig.getMapsApiService()
             val parkingLocations = mutableListOf<ParkingLocation>()
 
             val query = "Mall OR Plaza"
-            val response = placesService.getPlaces(query, "${userLocation.latitude},${userLocation.longitude}", radius, apiKey)
+            val response = placesService.getPlaces(
+                query,
+                "${userLocation.latitude},${userLocation.longitude}",
+                radius,
+                apiKey
+            )
 
             if (response.isSuccessful) {
                 response.body()?.results?.forEach { place ->
@@ -337,18 +247,20 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                         latLng.longitude,
                         distance
                     )
-                    if (distance[0] <= radius && (place.name.contains("Mall", ignoreCase = true) || place.name.contains("Plaza", ignoreCase = true))) {
+                    if (distance[0] <= radius && (place.name.contains(
+                            "Mall",
+                            ignoreCase = true
+                        ) || place.name.contains("Plaza", ignoreCase = true))
+                    ) {
                         if (isAdded) {
                             withContext(Dispatchers.Main) {
                                 addMarkerForPlace(latLng, place.name)
-                                parkingLocations.add(
-                                    createParkingLocation(
-                                        place,
-                                        userLocation,
-                                        latLng
-                                    )
-                                )
                             }
+                            val parkingLocation = createParkingLocation(
+                                place,
+                                latLng
+                            )
+                            parkingLocations.add(parkingLocation)
                         }
                     }
                 }
@@ -374,10 +286,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     private fun createParkingLocation(
         place: com.scifi.markirapp.data.network.response.Place,
-        userLocation: LatLng,
         latLng: LatLng,
     ): ParkingLocation {
-        val distance = calculateDistance(userLocation, latLng)
         val photoReference = place.photos?.firstOrNull()?.photoReference
         val imageUrl = if (photoReference != null) {
             val apiKey = BuildConfig.PLACES_API_KEY
@@ -386,27 +296,13 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         } else {
             ""
         }
+
         return ParkingLocation(
             placeId = place.placeId,
             name = place.name,
             latLng = latLng,
-            slotsAvailable = 10,
-            distance = distance,
-            imageUrl = imageUrl,
-            isBookmarked = false
+            imageUrl = imageUrl
         )
-    }
-
-    private fun calculateDistance(userLocation: LatLng, placeLatLng: LatLng): Float {
-        val userLocationObj = Location("").apply {
-            latitude = userLocation.latitude
-            longitude = userLocation.longitude
-        }
-        val placeLocation = Location("").apply {
-            latitude = placeLatLng.latitude
-            longitude = placeLatLng.longitude
-        }
-        return userLocationObj.distanceTo(placeLocation)
     }
 
     private fun addMarkerForPlace(latLng: LatLng, placeName: String?) {
@@ -415,8 +311,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 .position(latLng)
                 .title(placeName)
                 .icon(
-                    vectorToBitmap(
+                    AppsUtils.vectorToBitmap(
                         R.drawable.parking_icon,
+                        requireContext(),
                         60,
                         60
                     )
@@ -432,8 +329,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 .position(latLng)
                 .title(placeName)
                 .icon(
-                    vectorToBitmap(
+                    AppsUtils.vectorToBitmap(
                         R.drawable.baseline_location_pin_24,
+                        requireContext(),
                         100,
                         100
                     )
@@ -503,33 +401,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        context?.let {
-            fusedLocationClient.removeLocationUpdates(locationCallback)
-        }
         _binding = null
         mapFragment = null
-        CoroutineScope(Dispatchers.IO).coroutineContext.cancelChildren()
-    }
-
-    private class MapsFragmentLocationCallback(fragment: MapsFragment) : LocationCallback() {
-        private val fragmentRef = WeakReference(fragment)
-
-        override fun onLocationResult(locationResult: LocationResult) {
-            val fragment = fragmentRef.get()
-            if (fragment != null && fragment.isAdded) {
-                locationResult.locations.forEach { location ->
-                    if (fragment.isAdded) {
-                        fragment.updateLocation(location)
-                    }
-                }
-            }
-        }
-    }
-
-    companion object {
-        private val parkingPlaceTypes = listOf(
-            "parking", "airport", "bus_station", "train_station", "resort_hotel", "shopping_mall"
-        )
     }
 }
 
