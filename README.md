@@ -14,6 +14,17 @@ Markir is an application that aims to develop a cloud detection and visualizatio
 
 ![App Screenshot](https://github.com/afiqalghazali/MarkirApp/assets/90079738/269c938b-1f8d-4b53-81b3-9d124b734ed3)
 
+## ⚒️ Usage
+
+Add in your `local.properties` with your API key:
+```
+MAPS_API_KEY=YOUR_MAPS_API_KEY
+DIRECTIONS_API_KEY=YOUR_DIRECTIONS_API_KEY
+PLACES_API_KEY=YOUR_PLACES_API_KEY
+MARKIR_API_URL=DEFAULT_API_URL
+MAPS_API_URL=MAPS_API_URL
+```
+
 
 ## 🚀 Features
 
