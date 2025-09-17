@@ -7,12 +7,9 @@
 
 <h1 align="center">Markir: Match Parking Area</h1>
 
+![App Thumbnail](https://github.com/user-attachments/assets/1bbc292f-c8b4-4409-af50-fded24a9178f)
+
 Markir is an application that aims to develop a cloud detection and visualization system for parking locations, displaying information such as location name, distance, and number of available parking spaces. With fast and accurate information, the system simplifies the parking experience, reduces queuing time, and increases efficiency.
-
-
-## 📸 Screenshots
-
-![App Screenshot](https://github.com/afiqalghazali/MarkirApp/assets/90079738/269c938b-1f8d-4b53-81b3-9d124b734ed3)
 
 ## ⚒️ Usage
 
